@@ -1,28 +1,86 @@
-{% extends "likeme/BaseLayout.html" %}
+{% extends "likeme/BaseLayoutProva.html" %}
 {% load static %}
 
-<link rel="stylesheet"
-href="{% static 'css/style.css' %}" />
 
 {% block content %}
-    <h1>You are logged in as: {{ user }}</h1>
     <form action ="" method="POST">
 	    {% csrf_token %}
 	    <input type="text" name="content_post">
 	    <input type="submit" name="val" value="Post">
     </form>
 
-    <form action ="" method="POST">
-            {% csrf_token %}
-            <input type="text" name="content_comment">
-            <input type="submit" name="val" value="Comment">
-            {% for p in posts %}
-                <input type=checkbox name="post_id" id="post_id" value = "{{p.0.id}}" />
-		<h5> {{ p.0.content }} </h5>
-		<h3> Comentaris </h3>
-		{% for c in p.1 %}
-		    <h6> {{c.content }} </h6>
-		{% endfor %}
-            {% endfor %}
-    </form>
+
+
+
+<section class="forum-page">
+			<div class="container">
+				<div class="forum-questions-sec">
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="forum-questions">
+
+								<!-- POST -->
+								<div class="forum-post-view">
+									<div class="usr-question">
+										<form action ="" method="POST">
+											{% csrf_token %}
+											<input type="text" name="content_comment">
+											<input type="submit" name="val" value="Comment">
+										{% for p in posts %}
+										<div class="usr_img">
+											<img src="http://via.placeholder.com/60x60" alt="">
+										</div>
+
+										<div class="usr_quest">
+											<h3> Usuari </h3>
+											<p>{{ p.0.content }}</p>
+											<span><i class="fa fa-clock-o"></i>3 min ago</span>
+											<ul class="react-links">
+												<li><a href="#" title=""><i class="fa fa-heart"></i> Vote 150</a></li>
+												<li><a href="#" title=""><i class="fa fa-comment"></i> Comments  15</a></li>
+												<li><a href="#" title=""><i class="fa fa-share-alt"></i> Share</a></li>
+											</ul>
+											<div class="comment-section">
+												<input type=checkbox name="post_id" id="post_id" value = "{{p.0.id}}" />
+												<h3>Comentaris</h3>
+												<div class="comment-sec">
+													<ul>
+														{% for c in p.1 %}
+														<li>
+															<div class="comment-list">
+																<div class="bg-img">
+																	<img src="http://via.placeholder.com/40x40" alt="">
+																</div>
+																<div class="comment">
+																	<h3>John Smith</h3>
+																	<span><img src="images/clock.png" alt=""> 3 min ago</span>
+																	<p>{{c.content }}</p>
+																</div>
+															</div><!--comment-list end-->
+														</li>
+														{% endfor %}
+													</ul>
+												</div><!--comment-sec end-->
+											</div>
+										</div><!--usr_quest end-->
+										{% endfor %}
+									</div><!--usr-question end-->
+								</div>
+
+
+
+							</div><!--forum-questions end-->
+						</div>
+					</div>
+				</div><!--forum-questions-sec end-->
+			</div>
+		</section>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/popper.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+
 {% endblock %}
