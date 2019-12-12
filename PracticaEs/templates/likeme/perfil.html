@@ -9,37 +9,37 @@
 
 {% block feed %}
 
-           {% if client == request.user %}
-               <form action ="" method ="POST">
-               {% csrf_token %}
-                  <p> perfil public/privat </p>
-                  {% if user.profile_state == 1 %}
-                          <input type="radio" name="profile_status" value="privat" checked="checked"> Privat <br>
-                          <input type="radio" name="profile_status" value="public"> Public <br>
-                          <button class="btn btn-primary" id="status_btn" type="submit" name="status_btn">Seleccionar</button>
-                  {% else %}
-                          <input type="radio" name="profile_status" value="privat"> Privat <br>
-                          <input type="radio" name="profile_status" value="public" checked="checked"> Public <br>
-                          <button class="btn btn-primary" id="status_btn" type="submit" name="status_btn">Seleccionar</button>
-                  {% endif %}
+{% if client == request.user %}
+<form action ="" method ="POST">
+    {% csrf_token %}
+    <p> perfil public/privat </p>
+    {% if user.profile_state == 1 %}
+    <input type="radio" name="profile_status" value="privat" checked="checked"> Privat <br>
+    <input type="radio" name="profile_status" value="public"> Public <br>
+    <button class="btn btn-primary" id="status_btn" type="submit" name="status_btn">Seleccionar</button>
+    {% else %}
+    <input type="radio" name="profile_status" value="privat"> Privat <br>
+    <input type="radio" name="profile_status" value="public" checked="checked"> Public <br>
+    <button class="btn btn-primary" id="status_btn2" type="submit" name="status_btn">Seleccionar</button>
+    {% endif %}
 
 
-               </form>
-           {% endif %}             
+</form>
+{% endif %}
 
 
-            <!--POSTS-->
-            <div class="md-col-6" id="perfilfeed">
-                <form action ="" method="POST">
-                    {% csrf_token %}
-                    <!--Escriure post-->
-                    <div id="perfilpost">
-                        <div class="row">
-                            <div class="about-img" id="perfilpostfoto"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>
-                            <textarea class="form-control" id="perfilposttext" name="content_post" rows="4" placeholder="Comenta..."></textarea>
-                        </div>
-                        <input type="submit" style="float:right" name="post_value" value="Post" align="right" id="perfilpostbutton">
-                    </div>
+<!--POSTS-->
+<div class="md-col-6" id="perfilfeed">
+    <form action ="" method="POST">
+        {% csrf_token %}
+        <!--Escriure post-->
+        <div id="perfilpost">
+            <div class="row">
+                <div class="about-img" id="perfilpostfoto"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>
+                <textarea class="form-control" id="perfilposttext" name="content_post" rows="4" placeholder="Comenta..."></textarea>
+            </div>
+            <input type="submit" style="float:right" name="post_value" value="Post" align="right" id="perfilpostbutton">
+        </div>
 
                     <!--Visualitar posts-->
                     {% for p in posts %}
@@ -54,7 +54,7 @@
                             <h4> {{ p.0.content }} </h4>
                             <span><i class="fa fa-clock-o"></i>{{p.0.creation_date}}</span>
                             <ul class="row">
-				    
+
 
 
                                 <ul class="nav" id="post_reaction">
@@ -83,7 +83,7 @@
                                             <div class="modal-body">
                                                 {% for l in p.2 %}
                                                     <div class="row">
-                                                        <h3>{{l.user_like}} </h3>
+                                                        <li><a href="{% url 'mirarPerfil' user_liked.email %}" name="mirarPerfil">{{l.user_like.first_name}} {{l.user_like.last_name}}</a>
                                                         {% if l.like_type == "1" %}
                                                             <h3><i class="fas fa-heart"></i></h3>
                                                         {% elif l.like_type == "2" %}
@@ -93,6 +93,7 @@
                                                         {% else %}
                                                             <h3><i class="fas fa-heart-broken"></i></h3>
                                                         {% endif %}
+                                                        </li>
                                                     </div>
                                                 {% endfor %}
                                             </div>
