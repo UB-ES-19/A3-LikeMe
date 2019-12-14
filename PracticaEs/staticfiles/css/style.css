@@ -200,6 +200,8 @@ div {
 		color: red;
 		border: none;
 		height: 50%;
+		outline: 0;
+    	box-shadow: none!important;
 	}
 
 	#comment_delete{
