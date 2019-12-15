@@ -70,7 +70,11 @@ def forum(request):
                 pr = Posteig.objects.get(id=id)
                 try:
                     liked = Like.objects.get(user_like=request.user, post_id=pr)
-                    liked.delete()
+                    if (liked.like_type == type):
+                        liked.delete()
+                    else:
+                        liked.delete()
+                        Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
                 except (KeyError, Like.DoesNotExist, AttributeError):
                     Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
             except:
@@ -257,7 +261,11 @@ def mirarPerfil(request, email):
                 pr = Posteig.objects.get(id=id)
                 try:
                     liked = Like.objects.get(user_like=request.user, post_id=pr)
-                    liked.delete()
+                    if(liked.like_type == type):
+                        liked.delete()
+                    else:
+                        liked.delete()
+                        Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
                 except (KeyError, Like.DoesNotExist, AttributeError):
                     Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
             except:
@@ -289,6 +297,7 @@ def mirarPerfil(request, email):
 
     try:
         l = []
+        
         u = User.objects.get(email=email)
         posts = Posteig.objects.filter(user_post=u).order_by('-creation_date')
         for p in posts:
