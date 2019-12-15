@@ -89,6 +89,27 @@
     {% else %}
         <p> You have no pending requests! </p>
     {% endif %}
+
+    &nbsp
+    <h1> Blocked Users: </h1>
+    {% if blocked_users %}
+        {% for bu in blocked_users %}
+            <div class="row">
+                <form action ="" method="POST">
+                    {% csrf_token %}
+                    <div class="mt-2 col-md-5">
+                         <img align="left" src="{{user.photo.url}}" style="width:75px;height:75px; padding:5px"/>
+                    </div>
+                    <h2>
+                        <a href="{% url 'mirarPerfil' bu.blocked_user.email %}" name="mirarPerfil"> &nbsp {{bu.blocked_user.first_name}} {{bu.blocked_user.last_name}}</a>
+                        <button class="btn btn-primary" type="submit" name="cancel_block_user" value={{bu.id}}> Cancel</button>
+                    </h2>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p> You have no blocked users! </p>
+    {% endif %}
 </div>
 
 {% endblock %}
