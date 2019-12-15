@@ -63,14 +63,20 @@ def forum(request):
             except:
                 pass
         elif "like_value" in request.POST:
-            id = request.POST['like_value']
+            aux = request.POST['like_value']
+            id = aux[1:]
+            type = aux[0:1]
             try:
                 pr = Posteig.objects.get(id=id)
                 try:
                     liked = Like.objects.get(user_like=request.user, post_id=pr)
-                    liked.delete()
+                    if (liked.like_type == type):
+                        liked.delete()
+                    else:
+                        liked.delete()
+                        Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
                 except (KeyError, Like.DoesNotExist, AttributeError):
-                    Like.objects.create(post_id=pr, user_like=request.user)
+                    Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
             except:
                 pass
         elif "delete_value" in request.POST:
@@ -83,6 +89,12 @@ def forum(request):
             id = request.POST['deleteReply_value']
             Reply.objects.filter(id=id).delete()
 
+        elif "report_post" in request.POST:
+            id = request.POST['post_report_id']
+            report_message = request.POST['report_message']
+            pr = Posteig.objects.get(id=id)
+            user = request.user
+            Report.objects.create(post_id=pr, user_report=user, report_message=report_message)
 
     l = []
 
@@ -249,7 +261,11 @@ def mirarPerfil(request, email):
                 pr = Posteig.objects.get(id=id)
                 try:
                     liked = Like.objects.get(user_like=request.user, post_id=pr)
-                    liked.delete()
+                    if(liked.like_type == type):
+                        liked.delete()
+                    else:
+                        liked.delete()
+                        Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
                 except (KeyError, Like.DoesNotExist, AttributeError):
                     Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
             except:
@@ -272,10 +288,36 @@ def mirarPerfil(request, email):
                 u.profile_state = 1
                 u.save()
 
+        elif "report_post" in request.POST:
+            id = request.POST['post_report_id']
+            report_message = request.POST['report_message']
+            pr = Posteig.objects.get(id=id)
+            user = request.user
+            Report.objects.create(post_id=pr, user_report=user, report_message=report_message)
 
+        elif "block_user" in request.POST.keys():
+            user_to_block_email = request.POST['block_user']
+            print(user_to_block_email)
+            try:
+                user_to_block = User.objects.get(email=user_to_block_email)
+                form = UserBlockForm()
+                fblock = form.save(commit=False)
+                fblock.blocked_by = request.user
+                fblock.blocked_user = user_to_block
+                fblock.save()
+
+                # Remove any relation they could have!
+                FriendShip.objects.filter(
+                    Q(user_sender=user_to_block, user_receiver=request.user) |
+                    Q(user_sender=request.user, user_receiver=user_to_block)).delete()
+
+                request.session['blockResult'] = 'OK'
+            except (KeyError, User.DoesNotExist, AttributeError):
+                request.session['blockResult'] = 'ERROR!'
 
     try:
         l = []
+        
         u = User.objects.get(email=email)
         posts = Posteig.objects.filter(user_post=u).order_by('-creation_date')
         for p in posts:

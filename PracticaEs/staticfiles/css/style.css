@@ -193,7 +193,27 @@ div {
 		color: red;
 		border: none;
 		height: 50%;
-		margin: 10px;
+	}
+
+	#post_report{
+		background-color: white;
+		color: red;
+		border: none;
+		height: 50%;
+	}
+
+	#comment_delete{
+		background-color: white;
+		color: red;
+		border: none;
+		height: 50%;
+	}
+
+	#reply_delete{
+		background-color: white;
+		color: red;
+		border: none;
+		height: 50%;
 	}
 
 	#post_reaction ul, ol {
