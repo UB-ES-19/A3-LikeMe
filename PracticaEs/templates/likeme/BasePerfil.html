@@ -61,7 +61,18 @@
                                 <input type="radio" name="profile_status" value="public" checked="checked"> Public <br>
                                 <button class="btn btn-primary" id="status_btn2" type="submit" name="status_btn">Seleccionar</button>
                             {% endif %}
+
                         </form>
+                    {% else %}
+
+                            {% csrf_token %}
+                            <p> Estat del perfil: </p>
+                            {% if client.profile_state == 0 %}
+                                <p> Public </p>
+                            {% else %}
+                                <p> Privat </p>
+                            {% endif %}
+
                     {% endif %}
                 </div>
             </div>
