@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.db import models
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import User, FriendShip
+from .models import User, FriendShip, BlockedUsers
 
 
 class RegisterForm(forms.ModelForm):
@@ -63,3 +63,8 @@ class FriendSearchForm(forms.ModelForm):
         model = FriendShip
         fields = ["user_sender", "user_receiver"]
 
+
+class UserBlockForm(forms.ModelForm):
+    class Meta:
+        model = BlockedUsers
+        fields = ["blocked_by", "blocked_user"]

@@ -295,6 +295,26 @@ def mirarPerfil(request, email):
             user = request.user
             Report.objects.create(post_id=pr, user_report=user, report_message=report_message)
 
+        elif "block_user" in request.POST.keys():
+            user_to_block_email = request.POST['block_user']
+            print(user_to_block_email)
+            try:
+                user_to_block = User.objects.get(email=user_to_block_email)
+                form = UserBlockForm()
+                fblock = form.save(commit=False)
+                fblock.blocked_by = request.user
+                fblock.blocked_user = user_to_block
+                fblock.save()
+
+                # Remove any relation they could have!
+                FriendShip.objects.filter(
+                    Q(user_sender=user_to_block, user_receiver=request.user) |
+                    Q(user_sender=request.user, user_receiver=user_to_block)).delete()
+
+                request.session['blockResult'] = 'OK'
+            except (KeyError, User.DoesNotExist, AttributeError):
+                request.session['blockResult'] = 'ERROR!'
+
     try:
         l = []
         
