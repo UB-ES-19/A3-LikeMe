@@ -61,6 +61,7 @@
                     </div>
                     <h4> {{ p.0.content }} </h4>
                     <span><i class="fa fa-clock-o"></i>{{p.0.creation_date}}</span>
+
                     <ul class="row">
 
                         <ul class="nav" id="post_reaction">
@@ -117,7 +118,7 @@
                             <div class="col"><button class="btn-btn-primary" id="post_report" type="submit" name="report_value" value={{p.0.id}}><i class="fa fa-exclamation-triangle"></i></button></div>
                         {% endif %}
                     </ul>
-                    <div class="collapse" id="perfilcommentcomment{{p.0.id}}">
+                     <div class="collapse" id="perfilcommentcomment{{p.0.id}}">
                         <input type="text" name="content_comment-{{p.0.id}}">
                         <button class="btn btn-primary" id="post_id" type="submit" name="comment_value" value={{p.0.id}}> Comment</button>
                         <h3> Comentaris </h3>
@@ -141,7 +142,7 @@
                                         <h6>{{r.content }} </h6>
                                         <ul class="row">
                                             {% if r.user_post == request.user %}
-                                                <div class="col"></div><button class="btn btn-primary" id="reply_delete" type="submit" name="deleteReply_value" value={{r.id}}><i class="fa fa-trash-alt" aria-hidden="true"></i></button></div>
+                                                <div class="col"></div><button class="btn btn-primary" id="reply_delete" type="submit" name="deleteReply_value" value={{r.id}}><i class="fa fa-trash-alt" aria-hidden="true"></i></button>
                                             {% endif %}
                                         </ul>
                                     {% endfor %}

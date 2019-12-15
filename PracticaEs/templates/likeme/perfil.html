@@ -167,7 +167,7 @@
                                         <h6>{{r.content }} </h6>
                                         <ul class="row">
                                             {% if r.user_post == request.user %}
-                                                <div class="col"></div><button class="btn btn-primary" id="reply_delete" type="submit" name="deleteReply_value" value={{r.id}}><i class="fa fa-trash-alt" aria-hidden="true"></i></button></div>
+                                                <div class="col"></div><button class="btn btn-primary" id="reply_delete" type="submit" name="deleteReply_value" value={{r.id}}><i class="fa fa-trash-alt" aria-hidden="true"></i></button>
                                             {% endif %}
                                         </ul>
                                     {% endfor %}
