@@ -127,6 +127,7 @@ class Posteig(models.Model):
     content = models.CharField(max_length=200)
     user_post = models.ForeignKey(User, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
+    location = models.CharField(max_length=30)
 
 
 class Comments(models.Model):
