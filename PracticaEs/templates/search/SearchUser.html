@@ -122,11 +122,13 @@ href="{% static 'css/style.css' %}" />
             </div>
 
         {% endfor %}
+
     {% endif %}
 
 
 
     {% if not l_possible_users and not l_freq_current_friends and not l_freq_send and not l_freq_to_accept and not l_blocked_users%}
+
         <h1> No user found. Try with another name </h1>
     {% endif %}
 

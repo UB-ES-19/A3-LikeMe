@@ -9,25 +9,17 @@
 
 {% block feed %}
 
-    {% if client %}
-        <div class="row">
-            <div class="md-col-3">
-                {% if request.user != client %}
-                    <form action ="" method="POST">
-                        {% csrf_token %}
-                        <button class="btn btn-primary" type="submit" name="block_user" value={{client.email}}> Block!</button>
-                    </form>
-                {% endif %}
-            </div>
-        </div>
-    {% endif %}
-
 
     <!--POSTS-->
     <div class="md-col-6" id="perfilfeed">
         <form action ="" method="POST">
             {% csrf_token %}
             <!--Escriure post-->
+            {% if blocked == True %}
+                <h3>Aquest usuari t'ha bloquejat</h3>
+            {% elif blocking == True %}
+                <h3>Usuari bloquejat</h3>
+            {% endif %}
             <div id="perfilpost">
                 <div class="row">
                     <div class="about-img" id="perfilpostfoto"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>
@@ -42,6 +34,7 @@
                     <div class="row" id="perfilcommentrow1">
                         <div class="about-img" id="perfilimgcomment"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>
                         <div id="perfilcommentnom">
+
                             <h2>{{p.0.user_post}}
                                 {% if p.0.user_post != request.user %}
                                     <h2><h4> <a href="#" type="text" data-toggle="modal"
@@ -182,6 +175,5 @@
         </form>
     </div>
 {% endblock %}
-
 </body>
 </html>

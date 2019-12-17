@@ -258,6 +258,7 @@ def search_users(request):
 
 def mirarPerfil(request, email):
     if request.method == "POST":
+
         if "post_value" in request.POST:
             Posteig.objects.create(content=request.POST['content_post'], user_post=request.user)
         if "comment_value" in request.POST:
@@ -336,10 +337,24 @@ def mirarPerfil(request, email):
                 request.session['blockResult'] = 'OK'
             except (KeyError, User.DoesNotExist, AttributeError):
                 request.session['blockResult'] = 'ERROR!'
+        elif "unblock_user" in request.POST:
+            BlockedUsers.objects.get(blocked_user=LikeMeUser.objects.get(email=email), blocked_by=request.user).delete()
 
     try:
+        try:
+            bl = BlockedUsers.objects.get(blocked_user=LikeMeUser.objects.get(email=email), blocked_by=request.user)
+            bo = True
+        except:
+            bo = False
+
+        try:
+            bl = BlockedUsers.objects.get(blocked_by=LikeMeUser.objects.get(email=email), blocked_user=request.user)
+            bx = True
+        except:
+            bx = False
+
         l = []
-        
+
         u = User.objects.get(email=email)
         posts = Posteig.objects.filter(user_post=u).order_by('-creation_date')
         for p in posts:
@@ -366,16 +381,20 @@ def mirarPerfil(request, email):
             else:
                 aut = False
 
-        # TODO: Blocked users should not be able to watch the other's profile
-
-        if aut:
+        if aut and not bx:
             context = {
 
                 'client': u,
-                'posts': l
+                'posts': l,
+                'blocked': bx,
+                'blocking': bo
             }
         else:
-            context = {}
+            context = {
+                'client': u,
+                'blocked': bx,
+                'blocking': bo
+            }
     except:
         context = {}
 
