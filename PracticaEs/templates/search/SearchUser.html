@@ -103,6 +103,7 @@ href="{% static 'css/style.css' %}" />
         {% endfor %}
     {% endif %}
 
+
     {% if l_blocked_users %}
     &nbsp
     <h1>Blocked Users: </h1>
@@ -126,6 +127,7 @@ href="{% static 'css/style.css' %}" />
 
 
     {% if not l_possible_users and not l_freq_current_friends and not l_freq_send and not l_freq_to_accept and not l_blocked_users%}
+
         <h1> No user found. Try with another name </h1>
     {% endif %}
 
