@@ -15,6 +15,11 @@
         <form action ="" method="POST">
             {% csrf_token %}
             <!--Escriure post-->
+            {% if blocked == True %}
+                <h3>Aquest usuari t'ha bloquejat</h3>
+            {% elif blocking == True %}
+                <h3>Usuari bloquejat</h3>
+            {% endif %}
             <div id="perfilpost">
                 <div class="row">
                     <div class="about-img" id="perfilpostfoto"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>

@@ -314,10 +314,25 @@ def mirarPerfil(request, email):
                 request.session['blockResult'] = 'OK'
             except (KeyError, User.DoesNotExist, AttributeError):
                 request.session['blockResult'] = 'ERROR!'
+        elif "unblock_user" in request.POST:
+            BlockedUsers.objects.get(blocked_user=LikeMeUser.objects.get(email=email), blocked_by=request.user).delete()
 
     try:
+        try:
+            bl = BlockedUsers.objects.get(blocked_user=LikeMeUser.objects.get(email=email), blocked_by=request.user)
+            bo = True
+        except:
+            bo = False
+
+        try:
+            bl = BlockedUsers.objects.get(blocked_by=LikeMeUser.objects.get(email=email), blocked_user=request.user)
+            bx = True
+        except:
+            bx = False
+
         l = []
-        
+        print(bo)
+        print(bx)
         u = User.objects.get(email=email)
         posts = Posteig.objects.filter(user_post=u).order_by('-creation_date')
         for p in posts:
@@ -332,7 +347,6 @@ def mirarPerfil(request, email):
         friends = [x.user_sender if x.user_sender != request.user else x.user_receiver for x in freq_current_friends]
         
         aut = False
-
         u = LikeMeUser.objects.get(email=email)
         if u.profile_state == 0:
             aut = True
@@ -344,14 +358,20 @@ def mirarPerfil(request, email):
             else:
                 aut = False
 
-        if aut:
+        if aut and not bx:
             context = {
 
                 'client': u,
-                'posts': l
+                'posts': l,
+                'blocked': bx,
+                'blocking': bo
             }
         else:
-            context = {}
+            context = {
+                'client': u,
+                'blocked': bx,
+                'blocking': bo
+            }
     except:
         context = {}
 

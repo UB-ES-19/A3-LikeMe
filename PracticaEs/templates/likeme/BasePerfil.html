@@ -73,16 +73,25 @@
                                 <p> Privat </p>
                             {% endif %}
                             {% if client %}
+                                    {% if blocking == False %}
+                                        <div class="md-col-3">
 
-                                    <div class="md-col-3">
+                                                <form action ="" method="POST">
+                                                    {% csrf_token %}
+                                                    <button class="btn btn-primary" type="submit" name="block_user" value={{client.email}}>Bloquejar</button>
+                                                </form>
 
-                                            <form action ="" method="POST">
-                                                {% csrf_token %}
-                                                <button class="btn btn-primary" type="submit" name="block_user" value={{client.email}}>Bloquejar</button>
-                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <div class="md-col-3">
 
-                                    </div>
+                                                <form action ="" method="POST">
+                                                    {% csrf_token %}
+                                                    <button class="btn btn-primary" type="submit" name="unblock_user" value={{client.email}}>Desbloquejar</button>
+                                                </form>
 
+                                        </div>
+                                    {% endif %}
                             {% endif %}
 
                     {% endif %}
