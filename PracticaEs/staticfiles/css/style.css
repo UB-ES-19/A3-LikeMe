@@ -121,11 +121,19 @@ div {
 
 
 	#nomperfil{
-		transform: translateY(-10%);
+		height: 50px;
+		transform: translateY(-150%);
+		margin: 50px;
+		font-weight: 10px;
+		font-size: 38px;
+		text-transform: uppercase;
+		-webkit-text-fill-color: white; /* Will override color (regardless of order) */
+		-webkit-text-stroke-width: 1px;
+		-webkit-text-stroke-color: black;
 	}
 
 	.profile-text>h5{
-		margin: -50px 0 20px 0;
+		margin: 100px 0 0 20px;
 		transform: translateY(-16%);
 		font-weight: 10px;
 		font-size: 38px;
@@ -137,7 +145,7 @@ div {
 	}
 
 	#barraperfil{
-		transform: translateY(-120%);
+		transform: translateY(-10%);
 
 	}
 	#barraperfil .col-md-2{
@@ -303,6 +311,7 @@ div {
 	#perfilcol3{
 		margin: 20px 0 0 0;
 		width: 23%;
+		padding-left: 40px !important;
 	}
 	#perfilcol3 .profile-text{
 		border-radius: 25px;
@@ -318,7 +327,8 @@ div {
 	}
 	#perfilfeed {
 		margin: 20px 0 0 0;
-		width: 50%;
+		width: 45%;
+		padding-left: 10px !important;
 	}
 	#perfilfeed .post-bar{
 		background-color: white;

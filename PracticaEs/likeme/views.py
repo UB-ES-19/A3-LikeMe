@@ -129,6 +129,9 @@ def friends(request):
         elif "accept_freq" in request.POST.keys():
             freq_id = request.POST['accept_freq']
             FriendShip.objects.filter(id=freq_id).update(accepted=True)
+        elif "cancel_block_user" in request.POST.keys():
+            block_id = request.POST['cancel_block_user']
+            BlockedUsers.objects.get(id=block_id).delete()
 
         return HttpResponseRedirect(reverse("friends"))
 
@@ -138,10 +141,13 @@ def friends(request):
         freq_send = FriendShip.objects.filter(user_sender=request.user, accepted=False)
         freq_to_accept = FriendShip.objects.filter(user_receiver=request.user, accepted=False)
 
+        blocked_users = BlockedUsers.objects.filter(blocked_by=request.user)
+
         context = {
             "freq_current_friends": freq_current_friends,
             "freq_send": freq_send,
             "freq_to_accept": freq_to_accept,
+            "blocked_users": blocked_users,
         }
 
         return render(request, 'likeme/friends.html', context)
@@ -176,13 +182,26 @@ def search_users(request):
             freq_id = request.POST['accept_freq']
             FriendShip.objects.filter(id=freq_id).update(accepted=True)
 
+        elif "cancel_block_user" in request.POST.keys():
+            block_id = request.POST['cancel_block_user']
+            BlockedUsers.objects.get(id=block_id).delete()
+
         return HttpResponseRedirect(reverse("search_users"))
 
     if request.method == "GET":
         to_search = request.session["to_search_friend"]
         # print(to_search)
         try:
-            users_found = User.objects.filter(first_name__icontains=to_search).exclude(email=request.user.email)
+
+
+            # TODO: You shouldnt be able to send freq to the users that have blocked you
+
+            blocked_users = BlockedUsers.objects.filter(blocked_by=request.user)
+            bus = [x.blocked_user.email for x in blocked_users]
+            bus.append(request.user.email)
+
+            users_found = User.objects.filter(first_name__icontains=to_search).exclude(email__in=bus)
+
             # print(users_found)
             l_freq_current_friends = []
             l_freq_send = []
@@ -223,7 +242,8 @@ def search_users(request):
                 "l_freq_current_friends": l_freq_current_friends,
                 "l_freq_send": l_freq_send,
                 "l_freq_to_accept": l_freq_to_accept,
-                "l_possible_users": l_possible_users
+                "l_possible_users": l_possible_users,
+                "l_blocked_users": blocked_users,
             }
 
             return render(request, 'search/SearchUser.html', context)
