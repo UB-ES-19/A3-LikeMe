@@ -258,6 +258,7 @@ def search_users(request):
 
 def mirarPerfil(request, email):
     if request.method == "POST":
+
         if "post_value" in request.POST:
             Posteig.objects.create(content=request.POST['content_post'], user_post=request.user)
         if "comment_value" in request.POST:
