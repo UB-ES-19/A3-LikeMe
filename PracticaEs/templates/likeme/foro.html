@@ -11,6 +11,15 @@
                 <div class="row">
                     <div class="about-img" id="perfilpostfoto"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>
                     <textarea class="form-control" id="perfilposttext" name="content_post" rows="4" placeholder="Comenta..."></textarea>
+                    <!-- sense backend nse massa si la lio :S -->
+                    <div class="checkbox">
+                        <label data-toggle="collapse" data-target="#locationpost">
+                            <input type="checkbox"/> Add location
+                        </label>
+                    </div>
+                    <div class="collapse" id="locationpost">
+                        <input type="text" class="form-control" id="perfilpostlocation" placeholder="location" name="location_post">
+                    </div>
                 </div>
                 <input type="submit" style="float:right" name="post_value" value="Post" align="right" id="perfilpostbutton">
             </div>
@@ -61,9 +70,10 @@
                     </div>
                     <h4> {{ p.0.content }} </h4>
                     <div class="row"><span><i class="fa fa-clock-o"></i> {{p.0.creation_date}}</span></div>
-                    <div class="row"><span><i class="fa fa-map-marker-alt"></i> location</span></div>
-                    <!--{{p.0.location}}-->
-
+                    <!-- o el valor per defecte q es posi -->
+                    <!--{{ % if p.0.location != null %}}
+                        <div class="row"><span><i class="fa fa-map-marker-alt"></i>{{p.0.location}}</span></div>
+                    {{ % endif % }}-->
                     <ul class="row">
                         <ul class="nav" id="post_reaction">
                             <div class="row">
