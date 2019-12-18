@@ -59,7 +59,7 @@ def forum(request):
             try:
                 id = request.POST['reply_value']
                 c = Comments.objects.get(id=id)
-                Reply.objects.create(content=request.POST['content_reply-'+id], user_post=request.user, posteig_id=c)
+                Reply.objects.create(content=request.POST['content_reply-' + id], user_post=request.user, posteig_id=c)
             except:
                 pass
         elif "like_value" in request.POST:
@@ -70,7 +70,11 @@ def forum(request):
                 pr = Posteig.objects.get(id=id)
                 try:
                     liked = Like.objects.get(user_like=request.user, post_id=pr)
-                    liked.delete()
+                    if (liked.like_type == type):
+                        liked.delete()
+                    else:
+                        liked.delete()
+                        Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
                 except (KeyError, Like.DoesNotExist, AttributeError):
                     Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
             except:
@@ -95,7 +99,7 @@ def forum(request):
     l = []
 
     freq_current_friends = FriendShip.objects.filter(Q(user_sender=request.user, accepted=True)
-                                                    | Q(user_receiver=request.user, accepted=True))
+                                                     | Q(user_receiver=request.user, accepted=True))
     friends = [x.user_sender if x.user_sender != request.user else x.user_receiver for x in freq_current_friends]
 
     posts = Posteig.objects.filter(user_post__in=friends).exclude(user_post=request.user)
@@ -119,12 +123,18 @@ def forum(request):
 @login_required()
 def friends(request):
     if request.method == "POST":
+
         if "cancel_freq" in request.POST.keys():
             freq_id = request.POST['cancel_freq']
             FriendShip.objects.get(id=freq_id).delete()
+
         elif "accept_freq" in request.POST.keys():
             freq_id = request.POST['accept_freq']
             FriendShip.objects.filter(id=freq_id).update(accepted=True)
+
+        elif "cancel_block_user" in request.POST.keys():
+            block_id = request.POST['cancel_block_user']
+            BlockedUsers.objects.get(id=block_id).delete()
 
         return HttpResponseRedirect(reverse("friends"))
 
@@ -134,10 +144,13 @@ def friends(request):
         freq_send = FriendShip.objects.filter(user_sender=request.user, accepted=False)
         freq_to_accept = FriendShip.objects.filter(user_receiver=request.user, accepted=False)
 
+        blocked_users = BlockedUsers.objects.filter(blocked_by=request.user)
+
         context = {
             "freq_current_friends": freq_current_friends,
             "freq_send": freq_send,
             "freq_to_accept": freq_to_accept,
+            "blocked_users": blocked_users,
         }
 
         return render(request, 'likeme/friends.html', context)
@@ -172,13 +185,25 @@ def search_users(request):
             freq_id = request.POST['accept_freq']
             FriendShip.objects.filter(id=freq_id).update(accepted=True)
 
+        elif "cancel_block_user" in request.POST.keys():
+            block_id = request.POST['cancel_block_user']
+            BlockedUsers.objects.get(id=block_id).delete()
+
         return HttpResponseRedirect(reverse("search_users"))
 
     if request.method == "GET":
         to_search = request.session["to_search_friend"]
         # print(to_search)
         try:
-            users_found = User.objects.filter(first_name__icontains=to_search).exclude(email=request.user.email)
+
+            # TODO: You shouldnt be able to send freq to the users that have blocked you
+
+            blocked_users = BlockedUsers.objects.filter(blocked_by=request.user)
+            bus = [x.blocked_user.email for x in blocked_users]
+            bus.append(request.user.email)
+
+            users_found = User.objects.filter(first_name__icontains=to_search).exclude(email__in=bus)
+
             # print(users_found)
             l_freq_current_friends = []
             l_freq_send = []
@@ -219,7 +244,8 @@ def search_users(request):
                 "l_freq_current_friends": l_freq_current_friends,
                 "l_freq_send": l_freq_send,
                 "l_freq_to_accept": l_freq_to_accept,
-                "l_possible_users": l_possible_users
+                "l_possible_users": l_possible_users,
+                "l_blocked_users": blocked_users,
             }
 
             return render(request, 'search/SearchUser.html', context)
@@ -232,6 +258,7 @@ def search_users(request):
 
 def mirarPerfil(request, email):
     if request.method == "POST":
+
         if "post_value" in request.POST:
             Posteig.objects.create(content=request.POST['content_post'], user_post=request.user)
         if "comment_value" in request.POST:
@@ -246,7 +273,7 @@ def mirarPerfil(request, email):
             try:
                 id = request.POST['reply_value']
                 c = Comments.objects.get(id=id)
-                Reply.objects.create(content=request.POST['content_reply-'+id], user_post=request.user, posteig_id=c)
+                Reply.objects.create(content=request.POST['content_reply-' + id], user_post=request.user, posteig_id=c)
             except:
                 pass
         elif "like_value" in request.POST:
@@ -257,7 +284,11 @@ def mirarPerfil(request, email):
                 pr = Posteig.objects.get(id=id)
                 try:
                     liked = Like.objects.get(user_like=request.user, post_id=pr)
-                    liked.delete()
+                    if(liked.like_type == type):
+                        liked.delete()
+                    else:
+                        liked.delete()
+                        Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
                 except (KeyError, Like.DoesNotExist, AttributeError):
                     Like.objects.create(post_id=pr, user_like=request.user, like_type=type)
             except:
@@ -273,10 +304,10 @@ def mirarPerfil(request, email):
             Reply.objects.filter(id=id).delete()
         elif "profile_status" in request.POST:
             u = LikeMeUser.objects.get(email=email)
-            if u.profile_state == 1 and request.POST['profile_status']== "public":
+            if u.profile_state == 1 and request.POST['profile_status'] == "public":
                 u.profile_state = 0
                 u.save()
-            elif u.profile_state == 0 and request.POST['profile_status']== "privat":
+            elif u.profile_state == 0 and request.POST['profile_status'] == "privat":
                 u.profile_state = 1
                 u.save()
 
@@ -287,8 +318,43 @@ def mirarPerfil(request, email):
             user = request.user
             Report.objects.create(post_id=pr, user_report=user, report_message=report_message)
 
+        elif "block_user" in request.POST.keys():
+            user_to_block_email = request.POST['block_user']
+            print(user_to_block_email)
+            try:
+                user_to_block = User.objects.get(email=user_to_block_email)
+                form = UserBlockForm()
+                fblock = form.save(commit=False)
+                fblock.blocked_by = request.user
+                fblock.blocked_user = user_to_block
+                fblock.save()
+
+                # Remove any relation they could have!
+                FriendShip.objects.filter(
+                    Q(user_sender=user_to_block, user_receiver=request.user) |
+                    Q(user_sender=request.user, user_receiver=user_to_block)).delete()
+
+                request.session['blockResult'] = 'OK'
+            except (KeyError, User.DoesNotExist, AttributeError):
+                request.session['blockResult'] = 'ERROR!'
+        elif "unblock_user" in request.POST:
+            BlockedUsers.objects.get(blocked_user=LikeMeUser.objects.get(email=email), blocked_by=request.user).delete()
+
     try:
+        try:
+            bl = BlockedUsers.objects.get(blocked_user=LikeMeUser.objects.get(email=email), blocked_by=request.user)
+            bo = True
+        except:
+            bo = False
+
+        try:
+            bl = BlockedUsers.objects.get(blocked_by=LikeMeUser.objects.get(email=email), blocked_user=request.user)
+            bx = True
+        except:
+            bx = False
+
         l = []
+
         u = User.objects.get(email=email)
         posts = Posteig.objects.filter(user_post=u).order_by('-creation_date')
         for p in posts:
@@ -299,9 +365,9 @@ def mirarPerfil(request, email):
             l.append(t)
 
         freq_current_friends = FriendShip.objects.filter(Q(user_sender=request.user, accepted=True)
-                                                    | Q(user_receiver=request.user, accepted=True))
+                                                         | Q(user_receiver=request.user, accepted=True))
         friends = [x.user_sender if x.user_sender != request.user else x.user_receiver for x in freq_current_friends]
-        
+
         aut = False
 
         u = LikeMeUser.objects.get(email=email)
@@ -315,14 +381,20 @@ def mirarPerfil(request, email):
             else:
                 aut = False
 
-        if aut:
+        if aut and not bx:
             context = {
 
                 'client': u,
-                'posts': l
+                'posts': l,
+                'blocked': bx,
+                'blocking': bo
             }
         else:
-            context = {}
+            context = {
+                'client': u,
+                'blocked': bx,
+                'blocking': bo
+            }
     except:
         context = {}
 

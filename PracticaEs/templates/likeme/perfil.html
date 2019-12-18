@@ -9,30 +9,17 @@
 
 {% block feed %}
 
-    {% if client == request.user %}
-        <form action ="" method ="POST">
-            {% csrf_token %}
-            <p> perfil public/privat </p>
-            {% if user.profile_state == 1 %}
-                <input type="radio" name="profile_status" value="privat" checked="checked"> Privat <br>
-                <input type="radio" name="profile_status" value="public"> Public <br>
-                <button class="btn btn-primary" id="status_btn" type="submit" name="status_btn">Seleccionar</button>
-            {% else %}
-                <input type="radio" name="profile_status" value="privat"> Privat <br>
-                <input type="radio" name="profile_status" value="public" checked="checked"> Public <br>
-                <button class="btn btn-primary" id="status_btn2" type="submit" name="status_btn">Seleccionar</button>
-            {% endif %}
-
-
-        </form>
-    {% endif %}
-
 
     <!--POSTS-->
     <div class="md-col-6" id="perfilfeed">
         <form action ="" method="POST">
             {% csrf_token %}
             <!--Escriure post-->
+            {% if blocked == True %}
+                <h3>Aquest usuari t'ha bloquejat</h3>
+            {% elif blocking == True %}
+                <h3>Usuari bloquejat</h3>
+            {% endif %}
             <div id="perfilpost">
                 <div class="row">
                     <div class="about-img" id="perfilpostfoto"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>
@@ -47,6 +34,7 @@
                     <div class="row" id="perfilcommentrow1">
                         <div class="about-img" id="perfilimgcomment"><img src="{{user.photo.url}}" class="img-responsive" alt=""></div>
                         <div id="perfilcommentnom">
+
                             <h2>{{p.0.user_post}}</h2>
                         </div>
                     </div>
@@ -100,6 +88,7 @@
                             </div>
                         </div>
 
+                        <!-- Cal agafar el nombre de comentaris (size/len) i no tinc ni idea de com fer-ho, la tupla és a {{p.1}} pero nse com mirar-ne la mida -->
                         <div class="col" id="postcomment"><a data-toggle="collapse" href="#perfilcommentcomment{{p.0.id}}" title=""><i class="fa fa-comments"></i></a> {{p.1|length}} </div>
                         {% if p.0.user_post == request.user %}
                             <div class="col"><button class="btn btn-primary" id="post_delete" type="submit" name="delete_value" value={{p.0.id}}><i class="fas fa-trash-alt"></i></button></div>
@@ -147,7 +136,7 @@
                                 <ul class="row">
                                     <div class="col"><a data-toggle="collapse" href="#answercomment{{c.0.id}}" title=""><i class="fa fa-comments"></i></a> {{c.1|length}}</div>
                                     <div class="col"><a data-toggle="collapse" href="#commentanswer{{c.0.id}}"><i class="fa fa-pencil-square-o"></i></a></div>
-                                    {% if p.0.user_post == request.user %}
+                                    {% if c.0.user_post == request.user %}
                                         <div class="col"><button class="btn btn-primary" id="comment_delete" type="submit" name="deleteComment_value" value={{c.0.id}}><i class="fa fa-trash-alt" aria-hidden="true"></i></button></div>
                                     {% endif %}
                                 </ul>
@@ -159,7 +148,7 @@
                                         <h6>{{r.content }} </h6>
                                         <ul class="row">
                                             {% if r.user_post == request.user %}
-                                                <div class="col"></div><button class="btn btn-primary" id="reply_delete" type="submit" name="deleteReply_value" value={{r.id}}><i class="fa fa-trash-alt" aria-hidden="true"></i></button></div>
+                                                <div class="col"><button class="btn btn-primary" id="reply_delete" type="submit" name="deleteReply_value" value={{r.id}}><i class="fa fa-trash-alt" aria-hidden="true"></i></button></div>
                                             {% endif %}
                                         </ul>
                                     {% endfor %}
@@ -178,6 +167,5 @@
         </form>
     </div>
 {% endblock %}
-
 </body>
 </html>

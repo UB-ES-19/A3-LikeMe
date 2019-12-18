@@ -103,7 +103,32 @@ href="{% static 'css/style.css' %}" />
         {% endfor %}
     {% endif %}
 
-    {% if not l_possible_users and not l_freq_current_friends and not l_freq_send and not l_freq_to_accept %}
+
+    {% if l_blocked_users %}
+    &nbsp
+    <h1>Blocked Users: </h1>
+        {% for bu in l_blocked_users %}
+            <div class="row">
+                <form action ="" method="POST">
+                    {% csrf_token %}
+                    <div class="mt-2 col-md-5">
+                         <img align="left" src="{{user.photo.url}}" style="width:75px;height:75px; padding:5px"/>
+                    </div>
+                    <h2>
+                        <a href="{% url 'mirarPerfil' bu.blocked_user.email %}" name="mirarPerfil"> &nbsp {{bu.blocked_user.first_name}} {{bu.blocked_user.last_name}}</a>
+                        <button class="btn btn-primary" type="submit" name="cancel_block_user" value={{bu.id}}> Cancel</button>
+                    </h2>
+                </form>
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+
+    {% if not l_possible_users and not l_freq_current_friends and not l_freq_send and not l_freq_to_accept and not l_blocked_users%}
+
         <h1> No user found. Try with another name </h1>
     {% endif %}
 
